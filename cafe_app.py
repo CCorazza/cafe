@@ -30,8 +30,8 @@ def index_view():
     coffee_time = get_coffee_time()
     now = arrow.now('Europe/Paris')
     humanized = coffee_time.humanize(now, locale='fr_FR')
-    coffee_time = coffee_time.format("HH:mm:ss")
-    now = now.format("HH:mm:ss")
+    coffee_time = coffee_time.format("HH:mm")
+    now = now.format("HH:mm")
     return render_template('index.jade', **locals())
 
 @app.route("/set/<int:hour>:<int:minute>")
