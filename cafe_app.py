@@ -27,7 +27,7 @@ def set_coffee_time(hour, minute=None):
 
 @app.route("/")
 def index_view():
-    coffee_time = get_coffee_time().to('local')
+    coffee_time = get_coffee_time()
     now = arrow.now('Europe/Paris')
     humanized = coffee_time.humanize(now, locale='fr_FR')
     coffee_time = coffee_time.format("HH:mm:ss")
