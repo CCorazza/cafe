@@ -13,16 +13,14 @@ def get_coffee_time():
     except:
         set_coffee_time(4242)
         return get_coffee_time()
-    return next_coffee
+    return next_coffee.to('Europe/Paris')
 
 
 def set_coffee_time(hour, minute=None):
     if (minute is None):
         next_coffee = arrow.get(hour)
     else:
-        next_coffee = arrow.now().replace(hour=hour,
-                                          minute=minute,
-                                          second=0)
+        next_coffee = arrow.now('Europe/Paris').replace(hour=hour, minute=minute, second=0)
     with open("next_coffee", 'w+') as fd:
         fd.write(str(next_coffee.timestamp))
 
@@ -30,7 +28,7 @@ def set_coffee_time(hour, minute=None):
 @app.route("/")
 def index_view():
     coffee_time = get_coffee_time().to('local')
-    now = arrow.now()
+    now = arrow.now('Europe/Paris')
     humanized = coffee_time.humanize(now, locale='fr_FR')
     coffee_time = coffee_time.format("HH:mm:ss")
     now = now.format("HH:mm:ss")
