@@ -1,6 +1,9 @@
 # Local configuration
 nginx.conf
 
+# IDE
+.idea
+
 # Database
 *.db
 *.sqlite3
@@ -10,7 +13,6 @@ __pycache__
 *.py[cod]
 
 venv
-
 
 # Flask-Migrate
 migrations

@@ -3,10 +3,8 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.update(
-    DEBUG=False,
-    TESTING=False,
-    CSRF_ENABLED=True,
-    SECRET_KEY='somethingssomethingNSAsomething',
+    DEBUG=True,
+    TESTING=True,
     SQLALCHEMY_DATABASE_URI="sqlite:///./cafe.sqlite3",
 )
 app.jinja_env.add_extension('pyjade.ext.jinja.PyJadeExtension')
