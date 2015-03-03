@@ -3,9 +3,14 @@ nginx.conf
 
 # Database
 *.db
+*.sqlite3
 
 # Python
 __pycache__
 *.py[cod]
 
 venv
+
+
+# Flask-Migrate
+migrations
