@@ -20,24 +20,25 @@ import arrow
 
 
 TIMEZONE = "Europe/Paris"
-TIME_FORMAT = "X"
+TIME_FORMAT = "HH:mm X"
 
 
-@app.route('/login')
-def login():
-    return "ayy"
+@app.route('/all')
+def lelellele():
+    breaks = map(Break.__repr__, Break.query.all())
+    return "\n".join(breaks)
 
 
 @app.route('/')
 def display_next_break():
-    now = arrow.now(TIMEZONE)
+    now = arrow.get(arrow.now().float_timestamp).to(TIMEZONE)
 
     last_break = Break.query.order_by(Break.start_time.desc()).first()
     if not last_break:
         return render_template("index.no_last.jade", now=now.format(TIME_FORMAT))
 
-    break_time = arrow.get(last_break.start_time, TIMEZONE)
-    break_end = arrow.get(last_break.end_time, TIMEZONE) if last_break.end_time else None
+    break_time = arrow.get(last_break.start_time).to(TIMEZONE)
+    break_end = arrow.get(last_break.end_time).to(TIMEZONE) if last_break.end_time else None
 
     template = 'index.jade'
     if break_time < now:
