@@ -39,6 +39,9 @@ class User(db.Model):
     def __repr__(self):
         return "<User '{}'>".format(self.name)
 
+    def slack_format(self):
+        return "<@{}|{}>".format(self.id, self.full_name or self.name)
+
 
 class Break(db.Model):
     __tablename__ = "breaks"
@@ -47,6 +50,7 @@ class Break(db.Model):
     owner_id = db.Column(db.String)
     start_time = db.Column(db.Float)
     end_time = db.Column(db.Float, nullable=True)
+    channel = db.Column(db.String)
 
     def __init__(self, start_time, owner):
         self.owner_id = owner.id
