@@ -34,7 +34,7 @@ def cmd_list(**kwargs):
     output = []
     for num, brek in enumerate(get_breaks()):
         date = datetime.strptime(brek['time'], "%Y-%m-%d %H:%M:%S.%f")
-        output.append("[{num}] {date:%m-%d %H:%M}".format(**locals()))
+        output.append("[{num}] {date:%m/%d %H:%M}".format(**locals()))
     if output:
         out("\n".join(output))
     else:
@@ -58,7 +58,7 @@ def cmd_info(args, **kwargs):
         return out("Valeur n'est pas associable a une pause :( `{}`".format(args[0]))
     date = datetime.strptime(brek['time'], "%Y-%m-%d %H:%M:%S.%f")
     users = ", ".join("<@{user}>".format(user=user) for user in brek['users'])
-    out("[{index}], {date:%m-%d %H:%M}, {users}".format(**locals()))
+    out("[{index}], {date:%m/%d %H:%M}, {users}".format(**locals()))
 
 
 @pattern(r":coffee: ?@(\d+)[:h](\d+)")
@@ -192,10 +192,10 @@ def warn_on_time():
         dt = datetime.strptime(brek['time'], "%Y-%m-%d %H:%M:%S.%f")
         if now < dt < now + oneminute:
             out("PAUSE! :coffee: %s" % ", ".join("<@{user}>".format(user=user) for user in brek['users']))
-        elif dt < now:
+        if dt < now:
             del breaks[breaks.index(brek)]
             changed = True
-        elif now + oneminute < dt:
+        if now + oneminute < dt:
             break
     if changed:
         set_breaks(breaks)
