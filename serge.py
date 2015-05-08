@@ -190,12 +190,12 @@ def warn_on_time():
     changed = False
     for n, brek in enumerate(breaks[:]):
         dt = datetime.strptime(brek['time'], "%Y-%m-%d %H:%M:%S.%f")
-        if now + oneminute > dt:
+        if now < dt < now + oneminute:
+            out("PAUSE! :coffee: %s" % ", ".join("<@{user}>".format(user=user) for user in brek['users']))
+        elif dt < now:
             del breaks[breaks.index(brek)]
             changed = True
-        if now + oneminute > dt > now:
-            out("PAUSE! :coffee: %s" % ", ".join("<@{user}>".format(user=user) for user in brek['users']))
-        else:
+        elif now + oneminute < dt:
             break
     if changed:
         set_breaks(breaks)
