@@ -4,16 +4,13 @@ Parce que j'avais la flemme.
 
 """
 
-from datetime import datetime, timedelta
+import arrow
 import json
 import re
-import time
 
 
 
-GROVE = "G03CCAS2U"
-
-FORMAT = "%Y-%m-%d %H:%M %z"
+TIMEZONE = "Europe/Paris"
 
 outputs = []
 
@@ -34,8 +31,10 @@ def cmd_list(**kwargs):
     """
     output = []
     for num, brek in enumerate(get_breaks()):
-        date = datetime.strptime(brek['time'], FORMAT)
-        output.append("[{num}] {date:%m/%d %H:%M}".format(**locals()))
+        arw = arrow.get(brek['time']).to(TIMEZONE)
+        fromnow = arw.humanize()
+        date = arw.format("HH:MM")
+        output.append("[{num}] at {date}, {fromnow}".format(**locals()))
     if output:
         out("\n".join(output))
     else:
@@ -57,14 +56,16 @@ def cmd_info(args, **kwargs):
         brek = breaks[index]
     except IndexError:
         return out("Valeur n'est pas associable a une pause :( `{}`".format(args[0]))
-    date = datetime.strptime(brek['time'], FORMAT)
+    arw = arrow.get(brek['time']).to(TIMEZONE)
+    fromnow = arw.humanize()
+    date = arw.format("HH:MM")
     users = ", ".join("<@{user}>".format(user=user) for user in brek['users'])
-    out("[{index}], {date:%m/%d %H:%M}, {users}".format(**locals()))
+    out("[{index}] at {date}, {fromnow}, with {users}".format(**locals()))
 
 
 @pattern(r":coffee: ?@(\d+)[:h](\d+)")
 def cmd_create(args, user, **kwargs):
-    """usage: create <hour> <minutes>
+    """usage: create <hour> <minutese
     """
     if len(args) != 2:
         return out("Nombre d'arguments non valide :( `{}`".format(args))
@@ -73,8 +74,10 @@ def cmd_create(args, user, **kwargs):
         assert 0 <= hour < 24 and 0 <= minute < 60
     except (ValueError, AssertionError):
         return out("Heures et minutes sont invalides :( `{}` `{}`".format(*args))
-    dt = datetime.now().replace(hour=hour, minute=minute)
-    newbrek = { "users": [user], "time": dt.strftime(FORMAT) }
+    dt = arrow.now(TIMEZONE).replace(hour=hour, minute=minute, second=0, microsecond=0)
+    if (dt < arrow.now(TIMEZONE)):
+        dt = dt.replace(days=+1)
+    newbrek = { "users": [user], "time": str(dt) }
     breaks = get_breaks() + [newbrek]
     set_breaks(breaks)
     out("oklm, cyu l8r")
@@ -186,18 +189,17 @@ def get_breaks():
 
 
 def warn_on_time():
-    now = datetime.now()
+    now = arrow.now(TIMEZONE)
     breaks = get_breaks()
-    oneminute = timedelta(minutes=1)
     changed = False
     for n, brek in enumerate(breaks[:]):
-        dt = datetime.strptime(brek['time'], FORMAT)
-        if now < dt < now + oneminute:
+        dt = arrow.get(brek['time']).to(TIMEZONE)
+        if now < dt < now.replace(minutes=+1):
             out("PAUSE! :coffee: %s" % ", ".join("<@{user}>".format(user=user) for user in brek['users']))
         if dt < now:
             del breaks[breaks.index(brek)]
             changed = True
-        if now + oneminute < dt:
+        if now.replace(minutes=+1) < dt:
             break
     if changed:
         set_breaks(breaks)

@@ -20,6 +20,7 @@ $(DIR)/breaks.json:
 
 $(DIR)/venv:
 	virtualenv $(DIR)/venv
+	echo "arrow==0.5.4" >> $(DIR)/requirements.txt
 	$(DIR)/venv/bin/pip install -r $(DIR)/requirements.txt
 
 clean:
