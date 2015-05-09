@@ -13,6 +13,7 @@ import time
 
 GROVE = "G03CCAS2U"
 
+FORMAT = "%Y-%m-%d %H:%M %z"
 
 outputs = []
 
@@ -33,7 +34,7 @@ def cmd_list(**kwargs):
     """
     output = []
     for num, brek in enumerate(get_breaks()):
-        date = datetime.strptime(brek['time'], "%Y-%m-%d %H:%M:%S.%f")
+        date = datetime.strptime(brek['time'], FORMAT)
         output.append("[{num}] {date:%m/%d %H:%M}".format(**locals()))
     if output:
         out("\n".join(output))
@@ -56,7 +57,7 @@ def cmd_info(args, **kwargs):
         brek = breaks[index]
     except IndexError:
         return out("Valeur n'est pas associable a une pause :( `{}`".format(args[0]))
-    date = datetime.strptime(brek['time'], "%Y-%m-%d %H:%M:%S.%f")
+    date = datetime.strptime(brek['time'], FORMAT)
     users = ", ".join("<@{user}>".format(user=user) for user in brek['users'])
     out("[{index}], {date:%m/%d %H:%M}, {users}".format(**locals()))
 
@@ -73,7 +74,7 @@ def cmd_create(args, user, **kwargs):
     except (ValueError, AssertionError):
         return out("Heures et minutes sont invalides :( `{}` `{}`".format(*args))
     dt = datetime.now().replace(hour=hour, minute=minute)
-    newbrek = { "users": [user], "time": str(dt) }
+    newbrek = { "users": [user], "time": dt.strftime(FORMAT) }
     breaks = get_breaks() + [newbrek]
     set_breaks(breaks)
     out("oklm, cyu l8r")
@@ -142,6 +143,7 @@ shortcmds = {
 
 
 def process_message(data):
+    print(data)
     if 'subtype' in data:
         return
     if data['channel'] != GROVE:
@@ -189,7 +191,7 @@ def warn_on_time():
     oneminute = timedelta(minutes=1)
     changed = False
     for n, brek in enumerate(breaks[:]):
-        dt = datetime.strptime(brek['time'], "%Y-%m-%d %H:%M:%S.%f")
+        dt = datetime.strptime(brek['time'], FORMAT)
         if now < dt < now + oneminute:
             out("PAUSE! :coffee: %s" % ", ".join("<@{user}>".format(user=user) for user in brek['users']))
         if dt < now:
