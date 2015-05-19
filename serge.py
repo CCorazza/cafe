@@ -8,7 +8,7 @@ import arrow
 import json
 import re
 
-
+GROVE = "G03CCAS2U"
 
 TIMEZONE = "Europe/Paris"
 
@@ -33,7 +33,7 @@ def cmd_list(**kwargs):
     for num, brek in enumerate(get_breaks()):
         arw = arrow.get(brek['time']).to(TIMEZONE)
         fromnow = arw.humanize()
-        date = arw.format("HH:MM")
+        date = arw.format("HH:mm")
         output.append("[{num}] at {date}, {fromnow}".format(**locals()))
     if output:
         out("\n".join(output))
@@ -58,7 +58,7 @@ def cmd_info(args, **kwargs):
         return out("Valeur n'est pas associable a une pause :( `{}`".format(args[0]))
     arw = arrow.get(brek['time']).to(TIMEZONE)
     fromnow = arw.humanize()
-    date = arw.format("HH:MM")
+    date = arw.format("HH:mm")
     users = ", ".join("<@{user}>".format(user=user) for user in brek['users'])
     out("[{index}] at {date}, {fromnow}, with {users}".format(**locals()))
 
@@ -166,7 +166,7 @@ def process_message(data):
         for command, func in shortcmds.items():
             for match in func.pattern.finditer(data['text']):
                 args = list(match.groups())
-                func(args=args, **data)
+                return func(args=args, **data)
 
 
 def get_cmd(command):
