@@ -4,9 +4,9 @@
 ### End-User bot commands:
 
 The syntax to call a bot command is:
-`:coffee: (command <args...>)`
+`:coffee: (command <args...>)` -- fow now it doesn't work --
 or:
-`serge: coffee command <args...>`
+`serge: command <args...>`
 
 Shortcuts can be called this way:
 `:coffee: [42]`
@@ -22,38 +22,38 @@ The other two, however, can be called anywhere, multiple times in a message, etc
 
 #### The list of commands:
 
-`list`: Lists all breaks fitting in the `from` to `to` period.
+`list`: Lists all breaks.
 
-    list
+    serge: list
     :coffee: ?
 
 
 `info`: Displays information about a certain break.
 
-    info <id>
+    serge: info <id>
     :coffee: [<id>]
 
 
 `create`: Create a new break
 
-    create <hour> <minutes>
+    serge: create <hour> <minutes>
     :coffee: @<hour>:<minutes>
     :coffee: @<hour>h<minutes>
 
 
 `join`: Join a certain break
 
-    join <id>
+    serge: join <id>
     :coffee: +<id>
 
 
 `leave`: Leave a certain break
 
-    leave <id>
+    serge: leave <id>
     :coffee: -<id>
 
 
 `help`: Display a help message (or not)
 
-    help [command]
+    serge: help [command]
     :coffee:
