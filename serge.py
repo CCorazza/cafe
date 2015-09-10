@@ -7,6 +7,7 @@ Parce que j'avais la flemme.
 import arrow
 import json
 import re
+import requests
 
 GROVE = "G03CCAS2U"
 
@@ -15,7 +16,13 @@ TIMEZONE = "Europe/Paris"
 outputs = []
 
 def out(msg):
-    outputs.append([GROVE, msg])
+    requests.get("http://slack.com/api/chat.postMessage", params={
+            'token': "",
+            'channel': GROVE,
+            'text': msg,
+            'username': "serge",
+            'icon_emoji': ":chicken:",
+            })
 
 
 def pattern(_pattern):
@@ -146,7 +153,6 @@ shortcmds = {
 
 
 def process_message(data):
-    print(data)
     if 'subtype' in data:
         return
     if data['channel'] != GROVE:
